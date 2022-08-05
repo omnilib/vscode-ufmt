@@ -36,6 +36,8 @@ if os.getenv("USE_DEBUGPY", None) in ["True", "TRUE", "1", "T"]:
         # line and set breakpoints as appropriate.
         debugpy.breakpoint()
 
+root = pathlib.Path(__file__).parent.parent
+update_sys_path(root.as_posix())
 SERVER_PATH = os.fspath(pathlib.Path(__file__).parent / "server.py")
 # NOTE: Set breakpoint in `server.py` before continuing.
 runpy.run_path(SERVER_PATH, run_name="__main__")

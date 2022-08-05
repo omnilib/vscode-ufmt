@@ -30,8 +30,7 @@ update_sys_path(
 
 
 # pylint: disable=wrong-import-position,import-error
-import jsonrpc
-import utils
+from . import jsonrpc, utils
 
 RPC = jsonrpc.create_json_rpc(sys.stdin.buffer, sys.stdout.buffer)
 
@@ -51,18 +50,18 @@ while not EXIT_NOW:
         # next time around.
         with utils.substitute_attr(sys, "path", sys.path[:]):
             try:
-                # TODO: `utils.run_module` is equivalent to running `python -m <pytool-module>`.
-                # If your tool supports a programmatic API then replace the function below
-                # with code for your tool. You can also use `utils.run_api` helper, which
-                # handles changing working directories, managing io streams, etc.
-                # Also update `_run_tool_on_document` and `_run_tool` functions in `server.py`.
-                result = utils.run_module(
-                    module=msg["module"],
-                    argv=msg["argv"],
-                    use_stdin=msg["useStdin"],
-                    cwd=msg["cwd"],
-                    source=msg["source"] if "source" in msg else None,
-                )
+                import ufmt
+                import ufmt.util
+
+                if ufmt.__version__.startswith("1."):
+                    raise RuntimeError("Requires ufmt >= 2.0.0b1")
+
+                document_path = pathlib.Path(msg["document_path"]).resolve()
+                source_bytes = msg["source"].encode("utf-8")
+                black_config = ufmt.util.make_black_config(document_path)
+                usort_config = ufmt.types.UsortConfig.find(document_path)
+                ufmt_result = ufmt.ufmt_bytes(document_path, source_bytes, encoding="utf-8", black_config=black_config, usort_config=usort_config,)
+                result = utils.RunResult(ufmt_result.decode("utf-8"), "")
             except Exception:  # pylint: disable=broad-except
                 result = utils.RunResult("", traceback.format_exc(chain=True))
                 is_exception = True
