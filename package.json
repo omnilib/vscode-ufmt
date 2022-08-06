@@ -2,21 +2,21 @@
     "name": "ufmt",
     "displayName": "µfmt",
     "description": "Linting support for python files using `ufmt`.",
-    "version": "2022.0.0-dev",
+    "version": "2022.8.5-dev",
     "preview": true,
     "serverInfo": {
-        "name": "µfmt",
+        "name": "ufmt",
         "module": "ufmt"
     },
-    "publisher": "<my-publisher>",
+    "publisher": "omnilib",
     "license": "MIT",
-    "homepage": "https://github.com/<my-github>/<my-extension-project>",
+    "homepage": "https://ufmt.omnilib.dev",
     "repository": {
         "type": "git",
-        "url": "https://github.com/<my-github>/<my-extension-project>.git"
+        "url": "https://github.com/omnilib/ufmt.git"
     },
     "bugs": {
-        "url": "https://github.com/<my-github>/<my-extension-project>/issues"
+        "url": "https://github.com/omnilib/ufmt/issues"
     },
     "galleryBanner": {
         "color": "#1e415e",
@@ -24,7 +24,12 @@
     },
     "keywords": [
         "python",
-        "ufmt"
+        "formatting",
+        "black",
+        "ufmt",
+        "µfmt",
+        "usort",
+        "µsort"
     ],
     "engines": {
         "vscode": "^1.64.0"
@@ -39,6 +44,7 @@
     ],
     "activationEvents": [
         "onLanguage:python",
+        "workspaceContains:pyproject.toml",
         "workspaceContains:*.py",
         "onCommand:ufmt.restart"
     ],

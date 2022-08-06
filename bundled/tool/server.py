@@ -10,7 +10,6 @@ import pathlib
 import re
 import sys
 import traceback
-from typing import Sequence
 
 
 # **********************************************************
@@ -31,13 +30,6 @@ update_sys_path(
     os.getenv("LS_IMPORT_STRATEGY", "useBundled"),
 )
 
-
-update_sys_path(
-    os.fspath(pathlib.Path(__file__).parent.parent),
-    os.getenv("LS_IMPORT_STRATEGY", "useBundled"),
-)
-
-from bundled.tool.utils import RunResult
 
 # **********************************************************
 # Imports needed for the language server goes below this.
@@ -301,8 +293,14 @@ def _run_tool_on_document(
                 source_bytes = document.source.encode("utf-8")
                 black_config = ufmt.util.make_black_config(document_path)
                 usort_config = ufmt.types.UsortConfig.find(document_path)
-                ufmt_result = ufmt.ufmt_bytes(document_path, source_bytes, encoding="utf-8", black_config=black_config, usort_config=usort_config,)
-                result = RunResult(ufmt_result.decode("utf-8"), "")
+                ufmt_result = ufmt.ufmt_bytes(
+                    document_path,
+                    source_bytes,
+                    encoding="utf-8",
+                    black_config=black_config,
+                    usort_config=usort_config,
+                )
+                result = utils.RunResult(ufmt_result.decode("utf-8"), "")
             except Exception:
                 log_error(traceback.format_exc(chain=True))
                 raise
