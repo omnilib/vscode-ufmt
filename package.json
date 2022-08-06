@@ -1,14 +1,15 @@
 {
     "name": "ufmt",
     "displayName": "µfmt",
-    "description": "Linting support for python files using `ufmt`.",
-    "version": "2022.8.5-dev",
+    "description": "Safe, atomic formatting with black and µsort",
+    "version": "2022.8.5",
     "preview": true,
     "serverInfo": {
         "name": "ufmt",
         "module": "ufmt"
     },
     "publisher": "omnilib",
+    "icon": "icon.png",
     "license": "MIT",
     "homepage": "https://ufmt.omnilib.dev",
     "repository": {
@@ -25,6 +26,9 @@
     "keywords": [
         "python",
         "formatting",
+        "import",
+        "imports",
+        "sorting",
         "black",
         "ufmt",
         "µfmt",
@@ -36,7 +40,6 @@
     },
     "categories": [
         "Programming Languages",
-        "Linters",
         "Formatters"
     ],
     "extensionDependencies": [
@@ -142,7 +145,7 @@
         "commands": [
             {
                 "title": "Restart Server",
-                "category": "µfmt",
+                "category": "ufmt",
                 "command": "ufmt.restart"
             }
         ]

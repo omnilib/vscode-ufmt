@@ -1,3 +1,7 @@
-# Change Log
+# Changelog
 
--   Release information can be added here or can be tracked via github release.
+## 2022.8.5
+
+Initial release
+
+- Added "µfmt" formatter based on VS Code extension template
