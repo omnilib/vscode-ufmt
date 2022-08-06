@@ -1,0 +1,5 @@
+[tool.attribution]
+name = "vscode-ufmt"
+package = "vscode_ufmt"
+signed_tags = true
+version_file = false
