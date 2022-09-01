@@ -84,7 +84,7 @@ mypy-extensions==0.4.3 \
 packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \
     --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522
-    # via -r ./requirements.in
+    # via -r requirements.in
 pathspec==0.9.0 \
     --hash=sha256:7d15c4ddb0b5c802d161efc417ec1a2558ea2653c2e8ad9c19098201dc1c993a \
     --hash=sha256:e564499435a2673d586f6b2130bb5b95f04a3ba06f81b8f895b651a3c76aabb1
@@ -135,7 +135,7 @@ pydantic==1.9.1 \
 pygls==0.12.1 \
     --hash=sha256:3b9da223fd6e7624aed047dec2cbb6ab471c1441d5b48369daad012594c11610 \
     --hash=sha256:733167e836e6b73b3f0fb8ae254ca168ea8d3e84a7302ea0e1fc91a7a1672547
-    # via -r ./requirements.in
+    # via -r requirements.in
 pyparsing==3.0.9 \
     --hash=sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb \
     --hash=sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc
@@ -205,7 +205,6 @@ typing-extensions==4.3.0 \
     --hash=sha256:25642c956049920a5aa49edcdd6ab1e06d7e5d467fc00e0506c44ac86fbfca02 \
     --hash=sha256:e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6
     # via
-    #   black
     #   libcst
     #   pydantic
     #   typing-inspect
@@ -215,10 +214,10 @@ typing-inspect==0.7.1 \
     --hash=sha256:3cd7d4563e997719a710a3bfe7ffb544c6b72069b6812a02e9b414a8fa3aaa6b \
     --hash=sha256:b1f56c0783ef0f25fb064a01be6e5407e54cf4a4bf4f3ba3fe51e0bd6dcea9e5
     # via libcst
-ufmt==2.0.0rc1 \
-    --hash=sha256:90af13fdeef51624368dbdbf7e8903acd37e738f2533d35c929c1d75c9ce33a0 \
-    --hash=sha256:de389839aca42a18b79f1d5832ac6f724b182fe8974ee4002bb44727d50276a1
-    # via -r ./requirements.in
+ufmt==2.0.0 \
+    --hash=sha256:69a7821119381241bc30c5fef305f8d647230e15979b71f90ebb71add3103407 \
+    --hash=sha256:e5163bf728c1b48efd1ffe0759e8cce343738300aa6b355d6ad64175f5de792d
+    # via -r requirements.in
 usort==1.0.4 \
     --hash=sha256:74f5d20555b9df80ba00d21987279304983a254d2cbeb8ab46cc5b3f9c4d936a \
     --hash=sha256:a0c3f59c83231bcb3b0fb70f69834484d191c98ac66cfc12e03653a800e58f13
