@@ -5,6 +5,7 @@ on:
       - "**"
     tags:
       - "v*"
+  pull_request:
 
 jobs:
   build:
@@ -38,15 +39,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: "14.x"
+      - shell: bash
+        run: python -m pip install -U pip nox
+      - name: Bundle python packages
+        shell: bash
+        run: nox --session setup
       - run: npm install
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_config_arch: ${{ matrix.npm_config_arch }}
       - shell: pwsh
-        run:  echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
+        run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
       - run: npx vsce package --target ${{ env.target }}
       - uses: actions/upload-artifact@v3
         with:
