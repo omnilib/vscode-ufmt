@@ -1,6 +1,7 @@
 out
 dist
 node_modules
+wheels/
 .python-version
 .vscode-test/
 *.vsix
@@ -8,7 +9,6 @@ node_modules
 .vs/
 .nox/
 bundled/libs/
-bundled/wheels/
 **/__pycache__
 **/.pytest_cache
 **/.vs
