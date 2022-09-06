@@ -14,10 +14,10 @@
     "homepage": "https://ufmt.omnilib.dev",
     "repository": {
         "type": "git",
-        "url": "https://github.com/omnilib/ufmt.git"
+        "url": "https://github.com/omnilib/vscode-ufmt.git"
     },
     "bugs": {
-        "url": "https://github.com/omnilib/ufmt/issues"
+        "url": "https://github.com/omnilib/vscode-ufmt/issues"
     },
     "galleryBanner": {
         "color": "#1e415e",
