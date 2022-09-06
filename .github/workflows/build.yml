@@ -11,8 +11,6 @@ jobs:
   build:
     strategy:
       matrix:
-        node-version: ["14.x"]
-        python-version: ["3.10"]
         include:
           - os: macos-latest
             platform: darwin
@@ -43,15 +41,15 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "14.x"
       - shell: bash
         run: python -m pip install -U pip nox
       - name: Bundle python packages
         shell: bash
         run: nox --session setup
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
       - run: npm install
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
