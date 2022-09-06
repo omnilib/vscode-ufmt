@@ -1,7 +1,7 @@
 {
     "name": "ufmt",
-    "displayName": "µfmt",
-    "description": "Safe, atomic formatting with black and µsort",
+    "displayName": "\u00b5fmt",
+    "description": "Safe, atomic formatting with black and \u00b5sort",
     "version": "2022.8.5",
     "preview": true,
     "serverInfo": {
@@ -31,9 +31,9 @@
         "sorting",
         "black",
         "ufmt",
-        "µfmt",
+        "\u00b5fmt",
         "usort",
-        "µsort"
+        "\u00b5sort"
     ],
     "engines": {
         "vscode": "^1.64.0"
@@ -157,18 +157,18 @@
     "devDependencies": {
         "@types/fs-extra": "^9.0.13",
         "@types/vscode": "1.64.0",
-        "@types/glob": "^7.2.0",
+        "@types/glob": "^8.0.0",
         "@types/node": "14.x",
-        "@typescript-eslint/eslint-plugin": "^5.32.0",
-        "@typescript-eslint/parser": "^5.32.0",
+        "@typescript-eslint/eslint-plugin": "^5.36.2",
+        "@typescript-eslint/parser": "^5.36.2",
         "@vscode/test-electron": "^2.1.5",
-        "eslint": "^8.21.0",
+        "eslint": "^8.23.0",
         "glob": "^8.0.3",
         "prettier": "^2.7.1",
-        "typescript": "^4.7.4",
+        "typescript": "^4.8.2",
         "ts-loader": "^9.3.1",
         "webpack": "^5.74.0",
         "webpack-cli": "^4.10.0",
-        "vsce": "^2.10.0"
+        "vsce": "^2.11.0"
     }
 }
