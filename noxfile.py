@@ -5,24 +5,69 @@
 import json
 import os
 import pathlib
+import shutil
 import urllib.request as url_lib
 from typing import List
+from zipfile import ZipFile
 
 import nox  # pylint: disable=import-error
+
+NATIVE_SUFFIXES = (".so", ".dylib", ".pyd")
 
 
 def _install_bundle(session: nox.Session) -> None:
     session.install(
+        "-vvv",
         "-t",
         "./bundled/libs",
         "--no-cache-dir",
+        "--only-binary",
+        ":all:",
         "--implementation",
-        "py",
+        "cp",  # required to get upstream libcst wheels
         "--no-deps",
         "--upgrade",
         "-r",
         "./requirements.txt",
     )
+    _install_wheels(session)
+
+
+def _install_wheels(session: nox.Session) -> None:
+    root = pathlib.Path(__file__).parent
+    lib_dir = root / "bundled" / "libs"
+    wheel_dir = root / "bundled" / "wheels"
+    shutil.rmtree(wheel_dir)
+
+    for py_version in (
+        "3.7",
+        "3.8",
+        "3.9",
+        "3.10",
+    ):
+        session.run(
+            "pip",
+            "download",
+            "--dest",
+            wheel_dir.as_posix(),
+            "--no-deps",
+            "--require-hashes",
+            "--implementation",
+            "cp",
+            "--python-version",
+            py_version,
+            "-r",
+            "./requirements.txt",
+        )
+
+    for path in wheel_dir.iterdir():
+        if path.is_file() and path.suffix == ".whl":
+            with ZipFile(path, "r") as wheel:
+                for file_info in wheel.infolist():
+                    if file_info.filename.lower().endswith(NATIVE_SUFFIXES):
+                        print("\t" + file_info.filename)
+                        so_path = wheel.extract(file_info.filename, lib_dir)
+                        print("\t\t => " + so_path)
 
 
 def _check_files(names: List[str]) -> None:
@@ -35,7 +80,12 @@ def _check_files(names: List[str]) -> None:
 
 
 def _update_pip_packages(session: nox.Session) -> None:
-    session.run("pip-compile", "--generate-hashes", "--upgrade", "./requirements.in")
+    session.run(
+        "pip-compile",
+        "--generate-hashes",
+        "--upgrade",
+        "./requirements.in",
+    )
     session.run(
         "pip-compile",
         "--generate-hashes",
@@ -90,7 +140,12 @@ def _update_npm_packages(session: nox.Session) -> None:
 
 def _setup_template_environment(session: nox.Session) -> None:
     session.install("wheel", "pip-tools")
-    session.run("pip-compile", "--generate-hashes", "--upgrade", "./requirements.in")
+    session.run(
+        "pip-compile",
+        "--generate-hashes",
+        "--upgrade",
+        "./requirements.in",
+    )
     session.run(
         "pip-compile",
         "--generate-hashes",
