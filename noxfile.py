@@ -37,7 +37,7 @@ def _install_wheels(session: nox.Session) -> None:
     root = pathlib.Path(__file__).parent
     lib_dir = root / "bundled" / "libs"
     wheel_dir = root / "bundled" / "wheels"
-    shutil.rmtree(wheel_dir)
+    shutil.rmtree(wheel_dir, ignore_errors=True)
 
     for py_version in (
         "3.7",
@@ -48,6 +48,7 @@ def _install_wheels(session: nox.Session) -> None:
         session.run(
             "pip",
             "download",
+            "-q",
             "--dest",
             wheel_dir.as_posix(),
             "--no-deps",
