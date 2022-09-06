@@ -1,7 +1,7 @@
 vscode-ufmt
 ===========
 
-v2022.9.5
+v2022.9.6
 ---------
 
 Feature release
@@ -11,8 +11,8 @@ Feature release
 - Updated project URLs to point to vscode-ufmt (#5)
 
 ```
-$ git shortlog -s v2022.8.5...v2022.9.5
-     6	Amethyst Reese
+$ git shortlog -s v2022.8.5...v2022.9.6
+     8	Amethyst Reese
      1	John Reese
      5	dependabot[bot]
 ```
