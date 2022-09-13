@@ -19,10 +19,35 @@ import nox  # pylint: disable=import-error
 
 NATIVE_SUFFIXES = (".so", ".dylib", ".pyd", ".dll")
 
+PKG_VERSION_RE = re.compile(r"^(\S+)==(\S+)")
+PKG_HASH_RE = re.compile(r"\s*--hash=(\S+):(\S+)")
+
 ROOT = pathlib.Path(__file__).parent
 WHEEL_DIR = ROOT / "wheels"
 REQUIREMENTS = ROOT / "requirements.txt"
 
+PY_VERS = ("cp311", "cp310", "cp39", "cp38", "cp37", "cp37m")
+PLAT_NAMES = {
+    "Windows": "win",
+    "Darwin": "macosx",
+    "Linux": "manylinux",
+}
+PLAT_ARCH = {
+    "Windows": {
+        "arm64": (),
+        "x64": ("win32", "amd64"),
+    },
+    "Darwin": {
+        "arm64": ("arm64", "universal2"),
+        "x64": ("x86_64", "intel", "universal2"),
+    },
+    "Linux": {
+        "arm64": ("aarch64", "arm64"),
+        "x64": ("x86_64", "i686"),
+    },
+}
+
+SYS_NAME = platform.system()
 PIP_ARCH = os.environ.get("PIP_ARCH", "")
 if not PIP_ARCH:
     arch = platform.machine().lower()
@@ -47,29 +72,8 @@ class Requirement:
     hashes: List[Hash]
 
 
-def _install_bundle(session: nox.Session) -> None:
-    session.install(
-        "-vvv",
-        "-t",
-        "./bundled/libs",
-        "--no-cache-dir",
-        "--only-binary",
-        ":all:",
-        "--implementation",
-        "cp",  # required to get upstream libcst wheels
-        "--no-deps",
-        "--upgrade",
-        "-r",
-        "./requirements.txt",
-    )
-    _install_wheels(session)
-
-
-PKG_VERSION_RE = re.compile(r"^(\S+)==(\S+)")
-PKG_HASH_RE = re.compile(r"\s*--hash=(\S+):(\S+)")
-
-
 def _requirements() -> List[Requirement]:
+    """Parse requirements.txt for package name, version, and allowed hashes"""
     content = REQUIREMENTS.read_text()
 
     name = ""
@@ -94,40 +98,18 @@ def _requirements() -> List[Requirement]:
     return results
 
 
-def _download_wheels(session: nox.Session) -> pathlib.Path:
-    reqs = _requirements()
-
-    py_vers = ("cp311", "cp310", "cp39", "cp38", "cp37", "cp37m")
-    plat_names = {
-        "Windows": "win",
-        "Darwin": "macosx",
-        "Linux": "manylinux",
-    }
-    plat_arch = {
-        "Windows": {
-            "arm64": (),
-            "x64": ("win32", "amd64"),
-        },
-        "Darwin": {
-            "arm64": ("arm64", "universal2"),
-            "x64": ("x86_64", "intel", "universal2"),
-        },
-        "Linux": {
-            "arm64": ("aarch64", "arm64"),
-            "x64": ("x86_64", "i686"),
-        },
-    }
-    sys_name = platform.system()
+def _find_wheels() -> List[str]:
+    """Parse PyPI json data for requirements and filter to wheels for platform/arch"""
     plat_markers = [
         f"{py_ver}-{plat_name}"
-        for py_ver in py_vers
-        for plat_name in (plat_names[sys_name],)
+        for py_ver in PY_VERS
+        for plat_name in (PLAT_NAMES[SYS_NAME],)
     ]
-    arch_markers = plat_arch[sys_name][PIP_ARCH]
-    print(sys_name, plat_markers, arch_markers)
+    arch_markers = PLAT_ARCH[SYS_NAME][PIP_ARCH]
+    print(SYS_NAME, plat_markers, arch_markers)
 
-    target_urls = []
-    for req in reqs:
+    target_urls: List[str] = []
+    for req in _requirements():
         with urlopen(f"https://pypi.org/pypi/{req.name}/json") as response:
             data = json.loads(response.read())
             dists = data["releases"].get(req.version, [])
@@ -145,6 +127,12 @@ def _download_wheels(session: nox.Session) -> pathlib.Path:
                             break
 
     pprint(target_urls)
+    return target_urls
+
+
+def _download_wheels() -> pathlib.Path:
+    """Download all relevant wheels for the target platform/arch"""
+    target_urls = _find_wheels()
 
     WHEEL_DIR.mkdir(exist_ok=True)
 
@@ -160,7 +148,8 @@ def _download_wheels(session: nox.Session) -> pathlib.Path:
 
 
 def _install_wheels(session: nox.Session) -> None:
-    _download_wheels(session)
+    """Download and install wheels for the target platform/arch"""
+    _download_wheels()
 
     lib_dir = ROOT / "bundled" / "libs"
 
@@ -172,6 +161,24 @@ def _install_wheels(session: nox.Session) -> None:
                         print("\t" + file_info.filename)
                         so_path = wheel.extract(file_info.filename, lib_dir)
                         print("\t\t => " + so_path)
+
+
+def _install_bundle(session: nox.Session) -> None:
+    session.install(
+        "-vvv",
+        "-t",
+        "./bundled/libs",
+        "--no-cache-dir",
+        "--only-binary",
+        ":all:",
+        "--implementation",
+        "cp",  # required to get upstream libcst wheels
+        "--no-deps",
+        "--upgrade",
+        "-r",
+        "./requirements.txt",
+    )
+    _install_wheels(session)
 
 
 def _check_files(names: List[str]) -> None:
@@ -261,13 +268,20 @@ def _setup_template_environment(session: nox.Session) -> None:
 
 @nox.session()
 def clean(session: nox.Session) -> None:
+    shutil.rmtree((ROOT / "bundled" / "libs"), ignore_errors=True)
     shutil.rmtree((ROOT / "wheels"), ignore_errors=True)
+
+
+@nox.session()
+def find_wheels(session: nox.Session) -> None:
+    """Find relevent wheels and list their URLs"""
+    _find_wheels()
 
 
 @nox.session()
 def download_wheels(session: nox.Session) -> None:
     """Download wheels needed to build the package."""
-    _download_wheels(session)
+    _download_wheels()
 
 
 @nox.session()
