@@ -5,17 +5,46 @@
 import json
 import os
 import pathlib
+import platform
+import re
 import shutil
-import urllib.request as url_lib
+from dataclasses import dataclass
+from pprint import pprint
 from typing import List
+from urllib.parse import urlparse
+from urllib.request import urlopen
 from zipfile import ZipFile
 
 import nox  # pylint: disable=import-error
 
-NATIVE_SUFFIXES = (".so", ".dylib", ".pyd")
+NATIVE_SUFFIXES = (".so", ".dylib", ".pyd", ".dll")
 
 ROOT = pathlib.Path(__file__).parent
 WHEEL_DIR = ROOT / "wheels"
+REQUIREMENTS = ROOT / "requirements.txt"
+
+PIP_ARCH = os.environ.get("PIP_ARCH", "")
+if not PIP_ARCH:
+    arch = platform.machine().lower()
+    if arch in ("x86_64", "amd64"):
+        PIP_ARCH = "x64"
+    elif arch in ("arm64", "aarch64"):
+        PIP_ARCH = "arm64"
+    else:
+        raise RuntimeError(f"PIP_ARCH not provided, unexpected arch {arch!r}")
+
+
+@dataclass
+class Hash:
+    algo: str
+    value: str
+
+
+@dataclass
+class Requirement:
+    name: str
+    version: str
+    hashes: List[Hash]
 
 
 def _install_bundle(session: nox.Session) -> None:
@@ -36,37 +65,98 @@ def _install_bundle(session: nox.Session) -> None:
     _install_wheels(session)
 
 
-def _download_wheels(session: nox.Session) -> pathlib.Path:
-    for py_version in (
-        "3.7",
-        "3.8",
-        "3.9",
-        "3.10",
-    ):
-        session.run(
-            "pip",
-            "download",
-            "-q",
-            "--dest",
-            WHEEL_DIR.as_posix(),
-            "--no-deps",
-            "--require-hashes",
-            "--implementation",
-            "cp",
-            "--python-version",
-            py_version,
-            "-r",
-            "./requirements.txt",
-        )
+PKG_VERSION_RE = re.compile(r"^(\S+)==(\S+)")
+PKG_HASH_RE = re.compile(r"\s*--hash=(\S+):(\S+)")
 
-    wheel_names = sorted(
-        path.name
-        for path in WHEEL_DIR.iterdir()
-        if path.is_file() and path.suffix == ".whl"
-    )
-    for name in wheel_names:
-        print("\t" + name)
-    print()
+
+def _requirements() -> List[Requirement]:
+    content = REQUIREMENTS.read_text()
+
+    name = ""
+    version = ""
+    hashes: List[Hash] = []
+    results: List[Requirement] = []
+
+    for line in content.splitlines():
+        hash_match = PKG_HASH_RE.match(line)
+        if hash_match:
+            algo, value = hash_match.groups()
+            hashes.append(Hash(algo, value))
+            continue
+
+        pkg_match = PKG_VERSION_RE.match(line)
+        if pkg_match:
+            if name and version:
+                results.append(Requirement(name, version, hashes))
+                hashes = []
+            name, version = pkg_match.groups()
+
+    return results
+
+
+def _download_wheels(session: nox.Session) -> pathlib.Path:
+    reqs = _requirements()
+
+    py_vers = ("cp311", "cp310", "cp39", "cp38", "cp37", "cp37m")
+    plat_names = {
+        "Windows": "win",
+        "Darwin": "macosx",
+        "Linux": "manylinux",
+    }
+    plat_arch = {
+        "Windows": {
+            "arm64": (),
+            "x64": ("win32", "amd64"),
+        },
+        "Darwin": {
+            "arm64": ("arm64", "universal2"),
+            "x64": ("x86_64", "intel", "universal2"),
+        },
+        "Linux": {
+            "arm64": ("aarch64", "arm64"),
+            "x64": ("x86_64", "i686"),
+        },
+    }
+    sys_name = platform.system()
+    plat_markers = [
+        f"{py_ver}-{plat_name}"
+        for py_ver in py_vers
+        for plat_name in (plat_names[sys_name],)
+    ]
+    arch_markers = plat_arch[sys_name][PIP_ARCH]
+    print(sys_name, plat_markers, arch_markers)
+
+    target_urls = []
+    for req in reqs:
+        with urlopen(f"https://pypi.org/pypi/{req.name}/json") as response:
+            data = json.loads(response.read())
+            dists = data["releases"].get(req.version, [])
+
+            for dist in dists:
+                url = dist["url"]
+                dist_markers = dist["filename"].rpartition("-")[2]
+                if any(plat_marker in url for plat_marker in plat_markers) and any(
+                    arch_marker in dist_markers for arch_marker in arch_markers
+                ):
+                    digests = dist["digests"]
+                    for req_hash in req.hashes:
+                        if digests.get(req_hash.algo, "") == req_hash.value:
+                            target_urls.append(url)
+                            break
+
+    pprint(target_urls)
+
+    WHEEL_DIR.mkdir(exist_ok=True)
+
+    for url in target_urls:
+        parts = urlparse(url)
+        path = WHEEL_DIR / pathlib.Path(parts.path).name
+        if path.is_file():
+            continue
+
+        print(url, "->", path)
+        with urlopen(url) as response:
+            path.write_bytes(response.read())
 
 
 def _install_wheels(session: nox.Session) -> None:
@@ -110,7 +200,7 @@ def _update_pip_packages(session: nox.Session) -> None:
 
 def _get_package_data(package):
     json_uri = f"https://registry.npmjs.org/{package}"
-    with url_lib.urlopen(json_uri) as response:
+    with urlopen(json_uri) as response:
         return json.loads(response.read())
 
 
@@ -171,7 +261,7 @@ def _setup_template_environment(session: nox.Session) -> None:
 
 @nox.session()
 def clean(session: nox.Session) -> None:
-    shutil.rmtree(ROOT / "wheels")
+    shutil.rmtree((ROOT / "wheels"), ignore_errors=True)
 
 
 @nox.session()
