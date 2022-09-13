@@ -14,6 +14,9 @@ import nox  # pylint: disable=import-error
 
 NATIVE_SUFFIXES = (".so", ".dylib", ".pyd")
 
+ROOT = pathlib.Path(__file__).parent
+WHEEL_DIR = ROOT / "wheels"
+
 
 def _install_bundle(session: nox.Session) -> None:
     session.install(
@@ -33,12 +36,7 @@ def _install_bundle(session: nox.Session) -> None:
     _install_wheels(session)
 
 
-def _install_wheels(session: nox.Session) -> None:
-    root = pathlib.Path(__file__).parent
-    lib_dir = root / "bundled" / "libs"
-    wheel_dir = root / "wheels"
-    shutil.rmtree(wheel_dir, ignore_errors=True)
-
+def _download_wheels(session: nox.Session) -> pathlib.Path:
     for py_version in (
         "3.7",
         "3.8",
@@ -50,7 +48,7 @@ def _install_wheels(session: nox.Session) -> None:
             "download",
             "-q",
             "--dest",
-            wheel_dir.as_posix(),
+            WHEEL_DIR.as_posix(),
             "--no-deps",
             "--require-hashes",
             "--implementation",
@@ -61,7 +59,22 @@ def _install_wheels(session: nox.Session) -> None:
             "./requirements.txt",
         )
 
-    for path in wheel_dir.iterdir():
+    wheel_names = sorted(
+        path.name
+        for path in WHEEL_DIR.iterdir()
+        if path.is_file() and path.suffix == ".whl"
+    )
+    for name in wheel_names:
+        print("\t" + name)
+    print()
+
+
+def _install_wheels(session: nox.Session) -> None:
+    _download_wheels(session)
+
+    lib_dir = ROOT / "bundled" / "libs"
+
+    for path in WHEEL_DIR.iterdir():
         if path.is_file() and path.suffix == ".whl":
             with ZipFile(path, "r") as wheel:
                 for file_info in wheel.infolist():
@@ -72,9 +85,8 @@ def _install_wheels(session: nox.Session) -> None:
 
 
 def _check_files(names: List[str]) -> None:
-    root_dir = pathlib.Path(__file__).parent
     for name in names:
-        file_path = root_dir / name
+        file_path = ROOT / name
         lines: List[str] = file_path.read_text().splitlines()
         if any(line for line in lines if line.startswith("# TODO:")):
             raise Exception(f"Please update {os.fspath(file_path)}.")
@@ -155,6 +167,17 @@ def _setup_template_environment(session: nox.Session) -> None:
     #     "./src/test/python_tests/requirements.in",
     # )
     _install_bundle(session)
+
+
+@nox.session()
+def clean(session: nox.Session) -> None:
+    shutil.rmtree(ROOT / "wheels")
+
+
+@nox.session()
+def download_wheels(session: nox.Session) -> None:
+    """Download wheels needed to build the package."""
+    _download_wheels(session)
 
 
 @nox.session()
