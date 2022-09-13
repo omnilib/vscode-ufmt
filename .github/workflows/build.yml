@@ -47,12 +47,17 @@ jobs:
           node-version: "14.x"
       - shell: bash
         run: python -m pip install -U pip nox
+      - name: System runtime info
+        shell: bash
+        run: |
+          uname -a
+          arch
+          python -VV
+          python -c "import platform; print(platform.platform())"
+          python -m pip debug --verbose
       - name: Download python wheels
         shell: bash
         run: |
-          python -VV
-          python -c "import platform; print(platform.platform())"
-          arch
           nox --session download_wheels
       - name: Bundle python packages
         shell: bash
