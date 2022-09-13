@@ -37,6 +37,8 @@ jobs:
             arch: x64
             npm_config_arch: x64
     runs-on: ${{ matrix.os }}
+    env:
+      PIP_ARCH: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -47,9 +49,19 @@ jobs:
           node-version: "14.x"
       - shell: bash
         run: python -m pip install -U pip nox
+      - name: System runtime info
+        shell: bash
+        run: |
+          uname -a
+          arch
+          python -VV
+          python -c "import platform; print(platform.platform())"
+          python -c "import platform; print(platform.uname())"
+          python -m pip debug
       - name: Download python wheels
         shell: bash
-        run: nox --session download_wheels
+        run: |
+          nox --session download_wheels
       - name: Bundle python packages
         shell: bash
         run: nox --session setup
