@@ -307,7 +307,7 @@ def _run_tool_on_document(
         if result.stderr:
             log_to_output(result.stderr)
 
-    log_to_output(f"{document.uri} :\r\n{result.stdout}")
+    # log_to_output(f"{document.uri} :\r\n{result.stdout}")
     return result
 
 
