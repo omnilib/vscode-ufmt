@@ -132,7 +132,6 @@ class ProcessManager:
         self._lock = threading.Lock()
         self._thread_pool = ThreadPoolExecutor(10)
 
-    @atexit.register
     def stop_all_processes(self):
         """Send exit command to all processes and shutdown transport."""
         for i in self._rpc.values():
@@ -251,6 +250,7 @@ def run_over_json_rpc(
     return RpcRunResult(data["result"], "")
 
 
+@atexit.register
 def shutdown_json_rpc():
     """Shutdown all JSON-RPC processes."""
     _process_manager.stop_all_processes()

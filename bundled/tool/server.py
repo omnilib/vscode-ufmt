@@ -5,15 +5,20 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import importlib
 import json
 import os
 import pathlib
 import sys
-import importlib
 import traceback
 
 BUNDLED_LIBS = os.fspath(pathlib.Path(__file__).parent.parent / "libs")
 IMPORT_STRATEGY = os.getenv("LS_IMPORT_STRATEGY", "useBundled")
+
+
+class UfmtError(RuntimeError):
+    pass
+
 
 # **********************************************************
 # Update sys.path before importing any bundled libraries.
@@ -34,7 +39,7 @@ def update_sys_path(path_to_add: str, strategy: str) -> None:
 # Imports needed for the language server goes below this.
 # **********************************************************
 # Ensure that we can import LSP libraries, and other bundled libraries.
-with update_sys_path(BUNDLED_LIBS, "useBundled")
+with update_sys_path(BUNDLED_LIBS, "useBundled"):
     import jsonrpc
     import utils
     from pygls import lsp, protocol, server, uris, workspace
@@ -221,7 +226,9 @@ def _run_tool_on_document(
 
     use_path = False
     use_rpc = False
-    if settings["path"]:
+    if IMPORT_STRATEGY == "useBundled":
+        argv = []
+    elif settings["path"]:
         # 'path' setting takes priority over everything.
         use_path = True
         argv = settings["path"]
@@ -244,8 +251,11 @@ def _run_tool_on_document(
     else:
         argv += [document.path]
 
+    result = utils.RunResult("", "")
+
     if use_path:
         # This mode is used when running executables.
+        log_to_output("formatting via path")
         log_to_output(" ".join(argv))
         log_to_output(f"CWD Server: {cwd}")
         result = utils.run_path(
@@ -259,6 +269,7 @@ def _run_tool_on_document(
     elif use_rpc:
         # This mode is used if the interpreter running this server is different from
         # the interpreter used for running this server.
+        log_to_output("formatting via rpc")
         log_to_output(" ".join(settings["interpreter"] + ["-m"] + argv))
         log_to_output(f"CWD Linter: {cwd}")
 
@@ -277,27 +288,37 @@ def _run_tool_on_document(
             log_to_output(result.stderr)
     else:
         # In this mode the tool is run as a module in the same process as the language server.
-        log_to_output(" ".join([sys.executable, "-m"] + argv))
+        log_to_output("formatting in-process")
         log_to_output(f"CWD Linter: {cwd}")
         # This is needed to preserve sys.path, in cases where the tool modifies
         # sys.path and that might not work for this scenario next time around.
         with utils.substitute_attr(sys, "path", sys.path[:]):
             with update_sys_path(BUNDLED_LIBS, IMPORT_STRATEGY):
                 try:
-                    import black
-                    import libcst
-                    import usort
-                    import ufmt
-                    import ufmt.util
+                    # make sure we're importing correct versions each time
+                    # TODO: figure out if there's a better way to do this preemptively
+                    for module_name in list(sys.modules):
+                        if module_name.startswith(
+                            (
+                                "ufmt",
+                                "usort",
+                                "black",
+                                "libcst",
+                                "_black",
+                                "trailrunner",
+                            )
+                        ):
+                            del sys.modules[module_name]
 
-                    importlib.reload(black)
-                    importlib.reload(libcst)
-                    importlib.reload(usort)
-                    importlib.reload(ufmt.util)
-                    importlib.reload(ufmt)
+                    import ufmt
 
                     if ufmt.__version__.startswith("1."):
-                        raise RuntimeError("Requires ufmt >= 2.0.0b1")
+                        raise UfmtError(
+                            "ufmt >= 2.0 required, upgrade environment "
+                            'or set import strategy to "useBundled"'
+                        )
+
+                    import ufmt.util
 
                     document_path = pathlib.Path(document.path).resolve()
                     source_bytes = document.source.encode("utf-8")
@@ -311,11 +332,11 @@ def _run_tool_on_document(
                         usort_config=usort_config,
                     )
                     result = utils.RunResult(ufmt_result.decode("utf-8"), "")
+                except UfmtError as e:
+                    log_error(str(e))
                 except Exception:
                     log_error(traceback.format_exc(chain=True))
                     raise
-        if result.stderr:
-            log_to_output(result.stderr)
 
     # log_to_output(f"{document.uri} :\r\n{result.stdout}")
     return result
