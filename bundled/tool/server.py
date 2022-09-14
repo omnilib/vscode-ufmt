@@ -3,18 +3,22 @@
 """Implementation of tool support over LSP."""
 from __future__ import annotations
 
+import contextlib
 import copy
 import json
 import os
 import pathlib
-import re
 import sys
+import importlib
 import traceback
 
+BUNDLED_LIBS = os.fspath(pathlib.Path(__file__).parent.parent / "libs")
+IMPORT_STRATEGY = os.getenv("LS_IMPORT_STRATEGY", "useBundled")
 
 # **********************************************************
 # Update sys.path before importing any bundled libraries.
 # **********************************************************
+@contextlib.contextmanager
 def update_sys_path(path_to_add: str, strategy: str) -> None:
     """Add given path to `sys.path`."""
     if path_to_add not in sys.path and os.path.isdir(path_to_add):
@@ -22,22 +26,18 @@ def update_sys_path(path_to_add: str, strategy: str) -> None:
             sys.path.insert(0, path_to_add)
         elif strategy == "fromEnvironment":
             sys.path.append(path_to_add)
-
-
-# Ensure that we can import LSP libraries, and other bundled libraries.
-update_sys_path(
-    os.fspath(pathlib.Path(__file__).parent.parent / "libs"),
-    os.getenv("LS_IMPORT_STRATEGY", "useBundled"),
-)
+        yield
+        sys.path.remove(path_to_add)
 
 
 # **********************************************************
 # Imports needed for the language server goes below this.
 # **********************************************************
-# pylint: disable=wrong-import-position,import-error
-import jsonrpc
-import utils
-from pygls import lsp, protocol, server, uris, workspace
+# Ensure that we can import LSP libraries, and other bundled libraries.
+with update_sys_path(BUNDLED_LIBS, "useBundled")
+    import jsonrpc
+    import utils
+    from pygls import lsp, protocol, server, uris, workspace
 
 WORKSPACE_SETTINGS = {}
 RUNNER = pathlib.Path(__file__).parent / "runner.py"
@@ -282,28 +282,38 @@ def _run_tool_on_document(
         # This is needed to preserve sys.path, in cases where the tool modifies
         # sys.path and that might not work for this scenario next time around.
         with utils.substitute_attr(sys, "path", sys.path[:]):
-            try:
-                import ufmt
-                import ufmt.util
+            with update_sys_path(BUNDLED_LIBS, IMPORT_STRATEGY):
+                try:
+                    import black
+                    import libcst
+                    import usort
+                    import ufmt
+                    import ufmt.util
 
-                if ufmt.__version__.startswith("1."):
-                    raise RuntimeError("Requires ufmt >= 2.0.0b1")
+                    importlib.reload(black)
+                    importlib.reload(libcst)
+                    importlib.reload(usort)
+                    importlib.reload(ufmt.util)
+                    importlib.reload(ufmt)
 
-                document_path = pathlib.Path(document.path).resolve()
-                source_bytes = document.source.encode("utf-8")
-                black_config = ufmt.util.make_black_config(document_path)
-                usort_config = ufmt.types.UsortConfig.find(document_path)
-                ufmt_result = ufmt.ufmt_bytes(
-                    document_path,
-                    source_bytes,
-                    encoding="utf-8",
-                    black_config=black_config,
-                    usort_config=usort_config,
-                )
-                result = utils.RunResult(ufmt_result.decode("utf-8"), "")
-            except Exception:
-                log_error(traceback.format_exc(chain=True))
-                raise
+                    if ufmt.__version__.startswith("1."):
+                        raise RuntimeError("Requires ufmt >= 2.0.0b1")
+
+                    document_path = pathlib.Path(document.path).resolve()
+                    source_bytes = document.source.encode("utf-8")
+                    black_config = ufmt.util.make_black_config(document_path)
+                    usort_config = ufmt.types.UsortConfig.find(document_path)
+                    ufmt_result = ufmt.ufmt_bytes(
+                        document_path,
+                        source_bytes,
+                        encoding="utf-8",
+                        black_config=black_config,
+                        usort_config=usort_config,
+                    )
+                    result = utils.RunResult(ufmt_result.decode("utf-8"), "")
+                except Exception:
+                    log_error(traceback.format_exc(chain=True))
+                    raise
         if result.stderr:
             log_to_output(result.stderr)
 
