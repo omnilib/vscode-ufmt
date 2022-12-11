@@ -60,6 +60,7 @@ while not EXIT_NOW:
                 source_bytes = msg["source"].encode("utf-8")
                 black_config = ufmt.util.make_black_config(document_path)
                 usort_config = ufmt.types.UsortConfig.find(document_path)
+                os.environ['LIBCST_PARSER_TYPE'] = 'native'
                 ufmt_result = ufmt.ufmt_bytes(document_path, source_bytes, encoding="utf-8", black_config=black_config, usort_config=usort_config,)
                 result = utils.RunResult(ufmt_result.decode("utf-8"), "")
             except Exception:  # pylint: disable=broad-except
