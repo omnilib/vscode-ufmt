@@ -316,8 +316,18 @@ def _run_tool_on_document(
                             'or set import strategy to "useBundled"'
                         )
 
+                    import black
+                    import libcst
                     import ufmt.util
-                    from libcst import ParserSyntaxError
+                    import usort
+
+                    log_to_output(
+                        "formatting with:"
+                        f"  ufmt=={ufmt.__version__}"
+                        f"  black=={black.__version__}"
+                        f"  libcst=={libcst.LIBCST_VERSION}"
+                        f"  usort=={usort.__version__}"
+                    )
 
                     document_path = pathlib.Path(document.path).resolve()
                     source_bytes = document.source.encode("utf-8")
@@ -331,7 +341,7 @@ def _run_tool_on_document(
                         usort_config=usort_config,
                     )
                     result = utils.RunResult(ufmt_result.decode("utf-8"), "")
-                except (ParserSyntaxError, SyntaxError) as e:
+                except (libcst.ParserSyntaxError, SyntaxError) as e:
                     log_warning("Failed to format: " + str(e))
                 except UfmtError as e:
                     log_error(str(e))
