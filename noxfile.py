@@ -26,7 +26,7 @@ ROOT = pathlib.Path(__file__).parent
 WHEEL_DIR = ROOT / "wheels"
 REQUIREMENTS = ROOT / "requirements.txt"
 
-PY_VERS = ("cp311", "cp310", "cp39", "cp38", "cp37", "cp37m")
+PY_VERS = ("cp312", "cp311", "cp310", "cp39", "cp38", "cp37", "cp37m")
 PLAT_NAMES = {
     "Windows": "win",
     "Darwin": "macosx",
@@ -44,6 +44,26 @@ PLAT_ARCH = {
     "Linux": {
         "arm64": ("aarch64", "arm64"),
         "x64": ("x86_64", "i686"),
+    },
+}
+TARGET_PLATFORM_NAME = {
+    "Darwin": "darwin",
+    "Linux": "linux",
+    "Windows": "win32",
+}
+TARGET_ARCH_NAME = {
+    "Darwin": {
+        "arm64": "arm64",
+        "x86_64": "x64",
+    },
+    "Linux": {
+        "aarch64": "arm64",
+        "x86_64": "x64",
+    },
+    "Windows": {
+        "arm64": "arm64",
+        "amd64": "x64",
+        "x86_64": "x64",
     },
 }
 
@@ -336,7 +356,21 @@ def build_package(session: nox.Session) -> None:
     _check_files(["README.md", "LICENSE", "SECURITY.md", "SUPPORT.md"])
     _setup_template_environment(session)
     session.run("npm", "install", external=True)
-    session.run("npm", "run", "vsce-package", external=True)
+    version = session.run("git", "describe", external=True, silent=True).strip()[1:]
+    plat = TARGET_PLATFORM_NAME[platform.system()]
+    arch = TARGET_ARCH_NAME[platform.system()][platform.machine()]
+    target = f"{plat}-{arch}"
+    session.run(
+        "npm",
+        "run",
+        "vsce-package",
+        "--",
+        "--out",
+        f"ufmt-{target}-{version}.vsix",
+        "--target",
+        target,
+        external=True,
+    )
 
 
 @nox.session()
