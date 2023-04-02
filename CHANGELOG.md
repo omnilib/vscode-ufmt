@@ -67,7 +67,7 @@ Feature release
 ```text
 $ git shortlog -s v2022.8.5...v2022.9.5
      6	Amethyst Reese
-     1	John Reese
+     1	Amethyst Reese
      5	dependabot[bot]
 ```
 
@@ -81,7 +81,7 @@ Initial release
 
 ```text
 $ git shortlog -s v2022.8.5
-     7	John Reese
+     7	Amethyst Reese
 ```
 
 [attribution-badge]:
