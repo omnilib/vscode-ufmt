@@ -15,6 +15,9 @@ import traceback
 BUNDLED_LIBS = os.fspath(pathlib.Path(__file__).parent.parent / "libs")
 IMPORT_STRATEGY = os.getenv("LS_IMPORT_STRATEGY", "useBundled")
 
+UFMT_NAME = "ufmt-vscode"
+UFMT_VERSION = pathlib.Path(__file__).parent.parent.parent.name.partition("-")[2]
+
 
 class UfmtError(RuntimeError):
     pass
@@ -42,13 +45,14 @@ def update_sys_path(path_to_add: str, strategy: str) -> None:
 with update_sys_path(BUNDLED_LIBS, "useBundled"):
     import jsonrpc
     import utils
-    from pygls import lsp, protocol, server, uris, workspace
+    import lsprotocol.types as lsp
+    from pygls import protocol, server, uris, workspace
 
 WORKSPACE_SETTINGS = {}
 RUNNER = pathlib.Path(__file__).parent / "runner.py"
 
 MAX_WORKERS = 5
-LSP_SERVER = server.LanguageServer(max_workers=MAX_WORKERS)
+LSP_SERVER = server.LanguageServer(name=UFMT_NAME, version=UFMT_VERSION, max_workers=MAX_WORKERS)
 
 
 # **********************************************************
@@ -81,7 +85,7 @@ TOOL_ARGS = ["format"]  # default arguments always passed to your tool.
 #  Black: https://github.com/microsoft/vscode-black-formatter/blob/main/bundled/formatter
 
 
-@LSP_SERVER.feature(lsp.FORMATTING)
+@LSP_SERVER.feature(lsp.TEXT_DOCUMENT_FORMATTING)
 def formatting(params: lsp.DocumentFormattingParams) -> list[lsp.TextEdit] | None:
     """LSP handler for textDocument/formatting request."""
     # If your tool is a formatter you can use this handler to provide
