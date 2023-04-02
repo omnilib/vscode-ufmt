@@ -69,8 +69,8 @@
         "configuration": {
             "properties": {
                 "ufmt.logLevel": {
-                    "default": "error",
-                    "description": "The log level the extension logs at, defaults to 'error'",
+                    "default": "warn",
+                    "description": "The log level the extension logs at, defaults to 'warn'",
                     "enum": [
                         "debug",
                         "error",

@@ -44,15 +44,19 @@ def update_sys_path(path_to_add: str, strategy: str) -> None:
 # Ensure that we can import LSP libraries, and other bundled libraries.
 with update_sys_path(BUNDLED_LIBS, "useBundled"):
     import jsonrpc
-    import utils
     import lsprotocol.types as lsp
+    import utils
     from pygls import protocol, server, uris, workspace
 
 WORKSPACE_SETTINGS = {}
 RUNNER = pathlib.Path(__file__).parent / "runner.py"
 
 MAX_WORKERS = 5
-LSP_SERVER = server.LanguageServer(name=UFMT_NAME, version=UFMT_VERSION, max_workers=MAX_WORKERS)
+LSP_SERVER = server.LanguageServer(
+    name=UFMT_NAME,
+    version=UFMT_VERSION,
+    max_workers=MAX_WORKERS,
+)
 
 
 # **********************************************************
@@ -158,16 +162,6 @@ def initialize(params: lsp.InitializeParams) -> None:
     log_to_output(
         f"Settings used to run Server:\r\n{json.dumps(settings, indent=4, ensure_ascii=False)}\r\n"
     )
-
-    if isinstance(LSP_SERVER.lsp, protocol.LanguageServerProtocol):
-        if any(setting["logLevel"] == "debug" for setting in settings):
-            LSP_SERVER.lsp.trace = lsp.Trace.Verbose
-        elif any(
-            setting["logLevel"] in ["error", "warn", "info"] for setting in settings
-        ):
-            LSP_SERVER.lsp.trace = lsp.Trace.Messages
-        else:
-            LSP_SERVER.lsp.trace = lsp.Trace.Off
 
 
 @LSP_SERVER.feature(lsp.EXIT)
@@ -323,6 +317,7 @@ def _run_tool_on_document(
                         )
 
                     import ufmt.util
+                    from libcst import ParserSyntaxError
 
                     document_path = pathlib.Path(document.path).resolve()
                     source_bytes = document.source.encode("utf-8")
@@ -336,13 +331,15 @@ def _run_tool_on_document(
                         usort_config=usort_config,
                     )
                     result = utils.RunResult(ufmt_result.decode("utf-8"), "")
+                except (ParserSyntaxError, SyntaxError) as e:
+                    log_warning("Failed to format: " + str(e))
                 except UfmtError as e:
                     log_error(str(e))
                 except Exception:
                     log_error(traceback.format_exc(chain=True))
                     raise
 
-    # log_to_output(f"{document.uri} :\r\n{result.stdout}")
+    log_to_output("formatting complete")
     return result
 
 
