@@ -108,7 +108,7 @@ def formatting(params: lsp.DocumentFormattingParams) -> list[lsp.TextEdit] | Non
 
 def _formatting_helper(document: workspace.Document) -> list[lsp.TextEdit] | None:
     result = _run_tool_on_document(document, use_stdin=True)
-    if result.stdout:
+    if result is not None and result.stdout:
         new_source = _match_line_endings(document, result.stdout)
         return [
             lsp.TextEdit(
@@ -216,7 +216,7 @@ def _run_tool_on_document(
     if utils.is_stdlib_file(document.path):
         return None
 
-    if sys.version_info < (3,8):
+    if sys.version_info < (3, 8):
         log_error("vscode-ufmt requires environment with Python 3.8 or newer")
         return None
 
@@ -315,10 +315,11 @@ def _run_tool_on_document(
                     import ufmt
 
                     if ufmt.__version__.startswith("1."):
-                        raise UfmtError(
+                        log_error(
                             "ufmt >= 2.0 required, upgrade environment "
                             'or set import strategy to "useBundled"'
                         )
+                        return None
 
                     import black
                     import libcst
@@ -350,8 +351,9 @@ def _run_tool_on_document(
                 except UfmtError as e:
                     log_error(str(e))
                 except Exception:
-                    log_error(traceback.format_exc(chain=True))
-                    raise
+                    log_error(
+                        "uncaught exception:\n" + traceback.format_exc(chain=True)
+                    )
 
     log_to_output("formatting complete")
     return result
