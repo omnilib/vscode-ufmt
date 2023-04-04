@@ -16,8 +16,8 @@ sorter and the code formatter.
 
 Note:
 
-- This extension requires Python version 3.7 or newer.
-- The extension comes bundled with µfmt `2.0`.
+- This extension requires Python version 3.8 or newer.
+- The extension comes bundled with µfmt `2.1`.
   Older versions of µfmt may work, but are not supported.
 
 ## Usage
