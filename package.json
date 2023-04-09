@@ -162,13 +162,13 @@
         "@typescript-eslint/eslint-plugin": "^5.57.1",
         "@typescript-eslint/parser": "^5.57.1",
         "@vscode/test-electron": "^2.3.0",
-        "eslint": "^8.37.0",
-        "glob": "^9.3.4",
+        "@vscode/vsce": "^2.18.0",
+        "eslint": "^8.38.0",
+        "glob": "^9.3.5",
         "prettier": "^2.8.7",
-        "typescript": "^5.0.3",
+        "typescript": "^5.0.4",
         "ts-loader": "^9.4.2",
-        "webpack": "^5.77.0",
-        "webpack-cli": "^5.0.1",
-        "vsce": "^2.15.0"
+        "webpack": "^5.78.0",
+        "webpack-cli": "^5.0.1"
     }
 }
