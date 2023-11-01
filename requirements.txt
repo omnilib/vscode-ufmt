@@ -54,6 +54,10 @@ exceptiongroup==1.1.1 \
     --hash=sha256:232c37c63e4f682982c8b6459f33a8981039e5fb8756b2074364e5055c498c9e \
     --hash=sha256:d484c3090ba2889ae2928419117447a14daf3c1231d5e30d0aae34f354f01785
     # via cattrs
+importlib-metadata==6.8.0 \
+    --hash=sha256:3ebb78df84a805d7698245025b975d9d67053cd94c79245ba4b3eb694abe68bb \
+    --hash=sha256:dbace7892d8c0c4ac1ad096662232f831d4e64f4c4545bd53016a3e9d4654743
+    # via typeguard
 libcst==0.4.9 \
     --hash=sha256:01786c403348f76f274dbaf3888ae237ffb73e6ed6973e65eba5c1fc389861dd \
     --hash=sha256:045b3b0b06413cdae6e9751b5f417f789ffa410f2cb2815e3e0e0ea6bef10ec0 \
@@ -88,9 +92,9 @@ libcst==0.4.9 \
     # via
     #   ufmt
     #   usort
-lsprotocol==2023.0.0a1 \
-    --hash=sha256:133c339a7cccb299a5b357f9b8ef6aebe27616e0daf4ba54e63476afe0e12e47 \
-    --hash=sha256:32edfd4856abba1349bf5a070567445b3d7286951afba3644b472629796f82d0
+lsprotocol==2023.0.0b1 \
+    --hash=sha256:ade2cd0fa0ede7965698cb59cd05d3adbd19178fd73e83f72ef57a032fbb9d62 \
+    --hash=sha256:f7a2d4655cbd5639f373ddd1789807450c543341fa0a32b064ad30dbb9f510d4
     # via pygls
 moreorless==0.4.0 \
     --hash=sha256:17f1fbef60fd21c84ee085a929fe3acefcaddca30df5dd09c024e9939a9e6a00 \
@@ -108,7 +112,7 @@ packaging==23.0 \
     --hash=sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2 \
     --hash=sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97
     # via
-    #   -r ./requirements.in
+    #   -r requirements.in
     #   black
 pathspec==0.11.1 \
     --hash=sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687 \
@@ -120,10 +124,10 @@ platformdirs==3.2.0 \
     --hash=sha256:d5b638ca397f25f979350ff789db335903d7ea010ab28903f57b27e1b16c2b08 \
     --hash=sha256:ebe11c0d7a805086e99506aa331612429a72ca7cd52a1f0d277dc4adc20cb10e
     # via black
-pygls==1.0.1 \
-    --hash=sha256:adacc96da77598c70f46acfdfd1481d3da90cd54f639f7eee52eb6e4dbd57b55 \
-    --hash=sha256:f3ee98ddbb4690eb5c755bc32ba7e129607f14cbd313575f33d0cea443b78cb2
-    # via -r ./requirements.in
+pygls==1.1.2 \
+    --hash=sha256:783d29c93679bb6756772f2de9b9f53b1a6fdf3fba66aeca23e87aa8aab20ecf \
+    --hash=sha256:93fe17c01fd03307774290e685e7fa25bc1411cd72f243ff33eef21927fd0ad5
+    # via -r requirements.in
 pyyaml==6.0 \
     --hash=sha256:01b45c0191e6d66c470b6cf1b9531a771a83c1c4208272ead47a3ae4f2f603bf \
     --hash=sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293 \
@@ -188,9 +192,9 @@ trailrunner==1.4.0 \
     # via
     #   ufmt
     #   usort
-typeguard==2.13.3 \
-    --hash=sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4 \
-    --hash=sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1
+typeguard==4.0.0 \
+    --hash=sha256:194fb3dbcb06ea9caf7088f3befee014de57961689f9c859ac5239b1ef61d987 \
+    --hash=sha256:c4a40af0ba8a41077221271b46d0a6d8d46045443e4d887887c69254ca861952
     # via pygls
 typing-extensions==4.5.0 \
     --hash=sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb \
@@ -198,6 +202,7 @@ typing-extensions==4.5.0 \
     # via
     #   black
     #   libcst
+    #   typeguard
     #   typing-inspect
     #   ufmt
 typing-inspect==0.8.0 \
@@ -207,8 +212,12 @@ typing-inspect==0.8.0 \
 ufmt==2.1.0 \
     --hash=sha256:7bae9b9e07a5afb407fc7b47ec03ad5c169965de24a7d798d72a36017d563d37 \
     --hash=sha256:d977f0fad0c054bd69518a4b5ca4af6e8f39960982c4f9fe719a1687aaf92638
-    # via -r ./requirements.in
+    # via -r requirements.in
 usort==1.0.6 \
     --hash=sha256:81c69a4a6a750824834b18019a2e325ea38d7ae944cca4d98f15e62a27ca1f27 \
     --hash=sha256:b30a212f196d8f7b624e8c70ff0b11a6de4b1e1f21cc4fa75adf1689367e807a
     # via ufmt
+zipp==3.17.0 \
+    --hash=sha256:0e923e726174922dce09c53c59ad483ff7bbb8e572e00c7f7c46b88556409f31 \
+    --hash=sha256:84e64a1c28cf7e91ed2078bb8cc8c259cb19b76942096c8d7b84947690cabaf0
+    # via importlib-metadata
