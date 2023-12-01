@@ -88,9 +88,9 @@ libcst==0.4.9 \
     # via
     #   ufmt
     #   usort
-lsprotocol==2023.0.0a1 \
-    --hash=sha256:133c339a7cccb299a5b357f9b8ef6aebe27616e0daf4ba54e63476afe0e12e47 \
-    --hash=sha256:32edfd4856abba1349bf5a070567445b3d7286951afba3644b472629796f82d0
+lsprotocol==2023.0.0 \
+    --hash=sha256:c9d92e12a3f4ed9317d3068226592860aab5357d93cf5b2451dc244eee8f35f2 \
+    --hash=sha256:e85fc87ee26c816adca9eb497bb3db1a7c79c477a11563626e712eaccf926a05
     # via pygls
 moreorless==0.4.0 \
     --hash=sha256:17f1fbef60fd21c84ee085a929fe3acefcaddca30df5dd09c024e9939a9e6a00 \
@@ -108,7 +108,7 @@ packaging==23.0 \
     --hash=sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2 \
     --hash=sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97
     # via
-    #   -r ./requirements.in
+    #   -r requirements.in
     #   black
 pathspec==0.11.1 \
     --hash=sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687 \
@@ -120,10 +120,10 @@ platformdirs==3.2.0 \
     --hash=sha256:d5b638ca397f25f979350ff789db335903d7ea010ab28903f57b27e1b16c2b08 \
     --hash=sha256:ebe11c0d7a805086e99506aa331612429a72ca7cd52a1f0d277dc4adc20cb10e
     # via black
-pygls==1.0.1 \
-    --hash=sha256:adacc96da77598c70f46acfdfd1481d3da90cd54f639f7eee52eb6e4dbd57b55 \
-    --hash=sha256:f3ee98ddbb4690eb5c755bc32ba7e129607f14cbd313575f33d0cea443b78cb2
-    # via -r ./requirements.in
+pygls==1.2.1 \
+    --hash=sha256:04f9b9c115b622dcc346fb390289066565343d60245a424eca77cb429b911ed8 \
+    --hash=sha256:7dcfcf12b6f15beb606afa46de2ed348b65a279c340ef2242a9a35c22eeafe94
+    # via -r requirements.in
 pyyaml==6.0 \
     --hash=sha256:01b45c0191e6d66c470b6cf1b9531a771a83c1c4208272ead47a3ae4f2f603bf \
     --hash=sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293 \
@@ -188,10 +188,6 @@ trailrunner==1.4.0 \
     # via
     #   ufmt
     #   usort
-typeguard==2.13.3 \
-    --hash=sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4 \
-    --hash=sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1
-    # via pygls
 typing-extensions==4.5.0 \
     --hash=sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb \
     --hash=sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4
@@ -207,7 +203,7 @@ typing-inspect==0.8.0 \
 ufmt==2.1.0 \
     --hash=sha256:7bae9b9e07a5afb407fc7b47ec03ad5c169965de24a7d798d72a36017d563d37 \
     --hash=sha256:d977f0fad0c054bd69518a4b5ca4af6e8f39960982c4f9fe719a1687aaf92638
-    # via -r ./requirements.in
+    # via -r requirements.in
 usort==1.0.6 \
     --hash=sha256:81c69a4a6a750824834b18019a2e325ea38d7ae944cca4d98f15e62a27ca1f27 \
     --hash=sha256:b30a212f196d8f7b624e8c70ff0b11a6de4b1e1f21cc4fa75adf1689367e807a
