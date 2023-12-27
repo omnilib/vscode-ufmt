@@ -100,7 +100,7 @@
                     "type": "array"
                 },
                 "ufmt.importStrategy": {
-                    "default": "fromEnvironment",
+                    "default": "useBundled",
                     "description": "Defines where `ufmt` is imported from. This setting may be ignored if `ufmt.path` is set.",
                     "enum": [
                         "useBundled",
