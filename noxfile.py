@@ -173,7 +173,7 @@ def _install_wheels(session: nox.Session) -> None:
 
     lib_dir = ROOT / "bundled" / "libs"
 
-    for path in WHEEL_DIR.iterdir():
+    for path in sorted(WHEEL_DIR.iterdir()):
         if path.is_file() and path.suffix == ".whl":
             with ZipFile(path, "r") as wheel:
                 for file_info in wheel.infolist():
