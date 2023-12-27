@@ -297,21 +297,6 @@ def _run_tool_on_document(
         with utils.substitute_attr(sys, "path", sys.path[:]):
             with update_sys_path(BUNDLED_LIBS, IMPORT_STRATEGY):
                 try:
-                    # make sure we're importing correct versions each time
-                    # TODO: figure out if there's a better way to do this preemptively
-                    for module_name in list(sys.modules):
-                        if module_name.startswith(
-                            (
-                                "ufmt",
-                                "usort",
-                                "black",
-                                "libcst",
-                                "_black",
-                                "trailrunner",
-                            )
-                        ):
-                            del sys.modules[module_name]
-
                     import ufmt
 
                     if ufmt.__version__.startswith("1."):
