@@ -76,7 +76,7 @@ jobs:
           echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
           echo "version=$(git describe)" >> $env:GITHUB_ENV
       - run: npx vsce package --out ufmt-${{ env.target }}-${{ env.version }}.vsix --target ${{ env.target }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.target }}
           path: "*.vsix"
