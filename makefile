@@ -10,6 +10,12 @@ deps:
 test:
 	nox -s tests
 
+.PHONY: venv
+venv:
+	python -m venv --clear .venv
+	.venv/bin/python -m pip install -U pip -r requirements-dev.txt
+	.venv/bin/python -m pip install -Ur requirements.txt
+
 .PHONY: distclean
 distclean:
 	git clean -xfd
