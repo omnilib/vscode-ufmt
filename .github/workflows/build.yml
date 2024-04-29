@@ -76,7 +76,7 @@ jobs:
         run: |
           echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
           echo "version=$(git describe)" >> $env:GITHUB_ENV
-      - run: npx vsce package --out ufmt-${{ env.target }}-${{ env.version }}.vsix --target ${{ env.target }}
+      - run: npx @vscode/vsce package --out ufmt-${{ env.target }}-${{ env.version }}.vsix --target ${{ env.target }}
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ env.target }}
@@ -88,6 +88,6 @@ jobs:
     if: success() && startsWith( github.ref, 'refs/tags/' )
     steps:
       - uses: actions/download-artifact@v3
-      - run: npx vsce publish --packagePath $(find . -iname *.vsix)
+      - run: npx @vscode/vsce publish --packagePath $(find . -iname *.vsix)
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
