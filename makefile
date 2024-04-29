@@ -15,6 +15,7 @@ venv:
 	python -m venv --clear .venv
 	.venv/bin/python -m pip install -U pip -r requirements-dev.txt
 	.venv/bin/python -m pip install -Ur requirements.txt
+	.venv/bin/python -m pip install -Ur src/test/python_tests/requirements.txt
 
 .PHONY: distclean
 distclean:

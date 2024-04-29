@@ -44,6 +44,9 @@ class PythonFile:
         """Cleans up and deletes the python file."""
         os.unlink(self.fullpath)
 
+    def __str__(self):
+        return self.fullpath
+
 
 def get_server_info_defaults():
     """Returns server info from package.json"""
