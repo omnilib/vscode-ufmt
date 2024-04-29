@@ -25,7 +25,8 @@ def test_formatting_example():
     lines = contents.splitlines(keepends=False)
 
     actual = []
-    with utils.PythonFile(contents, UNFORMATTED_TEST_FILE_PATH.parent) as pf:
+    with utils.PythonFile(contents, UNFORMATTED_TEST_FILE_PATH.parent.resolve()) as pf:
+        # raise RuntimeError(f"{pf = !r}, {str(pf) = !r}")
         uri = utils.as_uri(str(pf))
 
         with session.LspSession() as ls_session:
