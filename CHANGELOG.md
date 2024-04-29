@@ -9,11 +9,11 @@ v2024.4.28
 
 Maintenance release
 
-- Update bundled black to 24.4.2
+- Update bundled black to 2024.4.2
 
 ```text
 $ git shortlog -s v2024.2.20...v2024.4.28
-     2	Amethyst Reese
+     5	Amethyst Reese
      1	dependabot[bot]
 ```
 
