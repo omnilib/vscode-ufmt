@@ -1,5 +1,6 @@
 .PHONY: build
 build:
+	rm -rf wheels
 	nox -s build_package
 
 .PHONY: deps
