@@ -26,7 +26,7 @@ ROOT = pathlib.Path(__file__).parent
 WHEEL_DIR = ROOT / "wheels"
 REQUIREMENTS = ROOT / "requirements.txt"
 
-PY_VERS = ("cp312", "cp311", "cp310", "cp39", "cp38")
+PY_VERS = ("cp313", "cp312", "cp311", "cp310", "cp39", "cp38")
 PLAT_NAMES = {
     "Windows": "win",
     "Darwin": "macosx",
