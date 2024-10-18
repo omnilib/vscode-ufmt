@@ -216,7 +216,7 @@ def _run_tool_on_document(
     if utils.is_stdlib_file(document.path):
         return None
 
-    if sys.version_info < (3, 8):
+    if sys.version_info < (3, 9):
         log_error("vscode-ufmt requires environment with Python 3.8 or newer")
         return None
 
