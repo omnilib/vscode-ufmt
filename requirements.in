@@ -14,4 +14,5 @@ packaging
 
 # TODO: Add your tool here
 black>=24.2.0,<25
+ruff-api>=0.0.8,<1
 ufmt>=2.1.0,<3

@@ -311,11 +311,20 @@ def _run_tool_on_document(
                     import ufmt.util
                     import usort
 
+                    try:
+                        import ruff_api
+
+                        ruff_api_version = ruff_api.__version__
+                    except ImportError as e:
+                        log_to_output(f"ruff-api failed to import: {e}")
+                        ruff_api_version = "None"
+
                     log_to_output(
                         "formatting with:"
                         f"  ufmt=={ufmt.__version__}"
                         f"  black=={black.__version__}"
                         f"  libcst=={libcst.LIBCST_VERSION}"
+                        f"  ruff-api=={ruff_api_version}"
                         f"  usort=={usort.__version__}"
                     )
 
