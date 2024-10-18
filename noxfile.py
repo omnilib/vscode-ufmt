@@ -26,6 +26,7 @@ ROOT = pathlib.Path(__file__).parent
 WHEEL_DIR = ROOT / "wheels"
 REQUIREMENTS = ROOT / "requirements.txt"
 
+PY_TARGET = "3.9"
 PY_VERS = ("cp313", "cp312", "cp311", "cp310", "cp39", "cp38")
 PLAT_NAMES = {
     "Windows": "win",
@@ -190,7 +191,7 @@ def _install_bundle(session: nox.Session) -> None:
         "./bundled/libs",
         "--no-cache-dir",
         "--python-version",
-        "3.8",  # ensure we get backports
+        PY_TARGET,  # ensure we get backports
         "--implementation",
         "cp",  # required to get upstream libcst wheels
         "--only-binary",
@@ -377,7 +378,7 @@ def build_package(session: nox.Session) -> None:
     )
 
 
-@nox.session(python="3.8")  # must use old Python to get backports
+@nox.session(python=PY_TARGET)  # must use old Python to get backports
 def update_packages(session: nox.Session) -> None:
     """Update pip and npm packages."""
     session.install("wheel", "pip-tools")
