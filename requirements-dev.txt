@@ -1,1 +1,1 @@
-attribution==1.7.1
+attribution==1.8.0
