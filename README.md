@@ -1,7 +1,7 @@
 # µfmt: safe, atomic formatting and import sorting
 
 [µfmt][] is a code formatter and import sorter for Python and Visual Studio Code,
-built on top of [black][] and [µsort][]:
+built on top of [black][] and [µsort][], with experimental support for [ruff-api][]:
 
 > Black makes code review faster by producing the smallest diffs possible.
   Blackened code looks the same regardless of the project you’re reading.
@@ -16,9 +16,9 @@ sorter and the code formatter.
 
 Note:
 
-- This extension requires Python version 3.8 or newer.
-- The extension comes bundled with µfmt `2.3`.
-  Older versions of µfmt may work, but are not supported.
+- This extension requires Python version 3.9 or newer.
+- The extension comes bundled with the latest version of µfmt `2.x`, as well
+  as black, µsort, and ruff-api.
 
 ## Usage
 
@@ -65,3 +65,4 @@ to your settings:
 [black]: https://black.rtfd.io
 [µsort]: https://usort.rtfd.io
 [µfmt]: https://ufmt.omnilib.dev
+[ruff-api]: https://pypi.org/project/ruff-api/
