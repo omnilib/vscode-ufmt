@@ -217,7 +217,7 @@ def _run_tool_on_document(
         return None
 
     if sys.version_info < (3, 9):
-        log_error("vscode-ufmt requires environment with Python 3.8 or newer")
+        log_error("vscode-ufmt requires environment with Python 3.9 or newer")
         return None
 
     # deep copy here to prevent accidentally updating global settings.
