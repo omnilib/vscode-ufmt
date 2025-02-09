@@ -90,6 +90,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
-      - run: npx @vscode/vsce publish --packagePath $(find . -iname *.vsix)
+          path: dist
+      - run: "find dist -iname '*.vsix'"
+      - run: "npx @vscode/vsce publish --packagePath $(find dist -iname '*.vsix')"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
