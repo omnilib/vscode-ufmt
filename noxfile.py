@@ -27,7 +27,7 @@ WHEEL_DIR = ROOT / "wheels"
 REQUIREMENTS = ROOT / "requirements.txt"
 
 PY_TARGET = "3.9"
-PY_VERS = ("cp313", "cp312", "cp311", "cp310", "cp39")
+PY_VERS = ("cp314", "cp313", "cp312", "cp311", "cp310", "cp39")
 PLAT_NAMES = {
     "Windows": "win",
     "Darwin": "macosx",
