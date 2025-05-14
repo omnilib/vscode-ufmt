@@ -2,7 +2,7 @@
     "name": "ufmt",
     "displayName": "\u00b5fmt",
     "description": "Safe, atomic formatting with black and \u00b5sort",
-    "version": "2025.2.9",
+    "version": "2025.5.13",
     "preview": false,
     "serverInfo": {
         "name": "ufmt",
