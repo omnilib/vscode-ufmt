@@ -151,22 +151,22 @@
         ]
     },
     "dependencies": {
-        "fs-extra": "^11.3.0",
+        "fs-extra": "^11.3.2",
         "vscode-languageclient": "7.0.0"
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
         "@types/vscode": "1.71.0",
-        "@types/glob": "^8.1.0",
+        "@types/glob": "^9.0.0",
         "@types/node": "14.x",
         "@vscode/test-electron": "^2.5.2",
-        "@vscode/vsce": "^3.3.2",
-        "eslint": "^9.26.0",
-        "glob": "^11.0.2",
-        "prettier": "^3.5.3",
-        "typescript": "^5.8.3",
-        "ts-loader": "^9.5.2",
-        "webpack": "^5.99.8",
+        "@vscode/vsce": "^3.6.2",
+        "eslint": "^9.38.0",
+        "glob": "^11.0.3",
+        "prettier": "^3.6.2",
+        "typescript": "^5.9.3",
+        "ts-loader": "^9.5.4",
+        "webpack": "^5.102.1",
         "webpack-cli": "^6.0.1"
     }
 }
