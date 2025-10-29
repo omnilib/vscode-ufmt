@@ -4,3 +4,4 @@ package = "vscode_ufmt"
 signed_tags = true
 version_file = false
 npm_packages = ["ufmt"]
+ignored_authors = ["dependabot"]
