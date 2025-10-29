@@ -18,6 +18,10 @@ venv:
 	.venv/bin/python -m pip install -Ur requirements.txt
 	.venv/bin/python -m pip install -Ur src/test/python_tests/requirements.txt
 
+.PHONY: clean
+clean:
+	rm -f *.vsix
+
 .PHONY: distclean
 distclean:
 	git clean -xfd
