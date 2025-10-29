@@ -82,7 +82,7 @@ jobs:
           name: ${{ env.target }}
           path: "*.vsix"
 
-  publish:
+  publish-vscode:
     runs-on: ubuntu-latest
     needs: build
     if: success() && startsWith( github.ref, 'refs/tags/' )
@@ -95,3 +95,18 @@ jobs:
       - run: "npx @vscode/vsce publish --packagePath $(find dist -iname '*.vsix')"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          
+  publish-ovsx:
+    runs-on: ubuntu-latest
+    needs: build
+    if: success() && startsWith( github.ref, 'refs/tags/' )
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist
+      - run: "find dist -iname '*.vsix'"
+      - run: "npx ovsx publish $(find dist -iname '*.vsix')"
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    
