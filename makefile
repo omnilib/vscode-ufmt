@@ -1,21 +1,21 @@
 .PHONY: build
 build:
-	nox -s build_package
+	uvx nox -s build_package
 
 .PHONY: deps
 deps:
-	nox -s update_packages
+	uvx nox -s update_packages
 
 .PHONY: test
 test:
-	nox -s tests
+	uvx nox -s tests
 
 .PHONY: venv
 venv:
-	python -m venv --clear .venv
-	.venv/bin/python -m pip install -U pip -r requirements-dev.txt
-	.venv/bin/python -m pip install -Ur requirements.txt
-	.venv/bin/python -m pip install -Ur src/test/python_tests/requirements.txt
+	uv venv --clear .venv
+	uv pip install -U pip -r requirements-dev.txt
+	uv pip install -Ur requirements.txt
+	uv pip install -Ur src/test/python_tests/requirements.txt
 
 .PHONY: clean
 clean:
