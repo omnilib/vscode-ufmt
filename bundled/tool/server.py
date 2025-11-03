@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Implementation of tool support over LSP."""
+
 from __future__ import annotations
 
 import contextlib
@@ -320,7 +321,7 @@ def _run_tool_on_document(
                         ruff_api_version = "None"
 
                     log_to_output(
-                        "formatting with:"
+                        "active versions:"
                         f"  ufmt=={ufmt.__version__}"
                         f"  black=={black.__version__}"
                         f"  libcst=={libcst.LIBCST_VERSION}"
@@ -330,12 +331,22 @@ def _run_tool_on_document(
 
                     document_path = pathlib.Path(document.path).resolve()
                     source_bytes = document.source.encode("utf-8")
+
+                    ufmt.config.load_config.cache_clear()
+                    ufmt_config = ufmt.config.load_config(document_path)
+                    log_to_output(
+                        "formatting with:"
+                        f"  formatter={ufmt_config.formatter.name}"
+                        f"  sorter={ufmt_config.sorter.name}"
+                    )
+
                     black_config = ufmt.util.make_black_config(document_path)
                     usort_config = ufmt.types.UsortConfig.find(document_path)
                     ufmt_result = ufmt.ufmt_bytes(
                         document_path,
                         source_bytes,
                         encoding="utf-8",
+                        ufmt_config=ufmt_config,
                         black_config=black_config,
                         usort_config=usort_config,
                     )
