@@ -1,6 +1,5 @@
 .PHONY: build
 build:
-	rm -rf wheels
 	nox -s build_package
 
 .PHONY: deps
@@ -20,7 +19,7 @@ venv:
 
 .PHONY: clean
 clean:
-	rm -f *.vsix
+	rm -rf wheels/ *.vsix
 
 .PHONY: distclean
 distclean:
