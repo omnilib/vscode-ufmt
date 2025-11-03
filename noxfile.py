@@ -361,7 +361,9 @@ def build_package(session: nox.Session) -> None:
     _check_files(["README.md", "LICENSE", "SECURITY.md", "SUPPORT.md"])
     _setup_template_environment(session)
     session.run("npm", "install", external=True)
-    version = session.run("git", "describe", external=True, silent=True).strip()[1:]
+    version = session.run(
+        "git", "describe", "--dirty", external=True, silent=True
+    ).strip()[1:]
     plat = TARGET_PLATFORM_NAME[platform.system()]
     arch = TARGET_ARCH_NAME[platform.system()][platform.machine()]
     target = f"{plat}-{arch}"

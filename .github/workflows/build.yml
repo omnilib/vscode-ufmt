@@ -105,8 +105,8 @@ jobs:
         with:
           merge-multiple: true
           path: dist
-      - run: "find dist -iname '*.vsix'"
-      - run: "npx ovsx publish $(find dist -iname '*.vsix')"
+      - run: "find dist/ -iname '*.vsix'"
+      - run: "npx ovsx publish -i dist/"
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
     
